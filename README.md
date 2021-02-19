@@ -2,13 +2,11 @@ Dependências
 ---------
 Primeiramente você precisa instalar o Tesseract e [baixar os dados](https://github.com/tesseract-ocr/tessdata_best) para a língua que deseja. Além disso, você deve ter o Python instalado e instalar os pacotes listados no `requirements.txt`.
 
-Além das dependências de software, você precisará de um dataset previamente organizado. A organização esperada é de uma pasta contendo todos os arquivos *pdf* de página única e outra pasta contendo os arquivos de imagem.* Assim, a organização mínima que você deve seguir para prosseguir com o fluxo esperado é:
+Além das dependências de software, você precisará de um dataset previamente organizado. A organização esperada é de uma pasta contendo todos os arquivos *pdf* de página única e outra pasta contendo os arquivos de imagem. Assim, a organização mínima que você deve seguir para prosseguir com o fluxo esperado é:
 
 - dataset/
   - dataset-original/    -> arquivos de imagem
 - pdf/                   -> arquivos pdf de página única
-
-##### *Caso você não tenha convertido os arquivos pdf para imagem ainda, confira o anexo ao final desse tutorial.
 
 Instruções
 ------------
