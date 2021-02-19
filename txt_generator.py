@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
-from tempfile import mkstemp
-from os import fdopen, remove
+from utils import format_bb, bb_intersection_over_union
 from shutil import move, copymode
 import xml.etree.ElementTree as ET
-import os, sys, os.path
-from os import path
-from html.parser import HTMLParser
-from collections import namedtuple
-import numpy as np
+import os, sys
 import cv2
-from shutil import copyfile
-from utils import format_bb, bb_intersection_over_union
 
 def fix_alternate_letters(word):
     if word != None:

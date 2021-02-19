@@ -1,9 +1,5 @@
 import fitz
-import json
-import sys
-import json
-import argparse
-import math
+import json, sys, argparse, math
 from lxml import etree, html
 from string import Template
 
