@@ -158,9 +158,9 @@ def __plot_matrix(subdataset, configs, config_ticks, charts_data, title):
             ax.text(j, i, percents[i, j], fontsize=10,
                            ha="center", va="center", color="w")
 
-    ax.set_title(title)
+    ax.set_title('Acurácia (0-100) | Orientação Retrato')
     fig.tight_layout()
-    plt.savefig(charts + '/' + title + '.jpeg', dpi=200)
+    plt.savefig(charts + '/' + 'Orientação Retrato' + '.jpeg', dpi=200)
     plt.show()
     plt.close()
 
@@ -168,5 +168,5 @@ def __plot_matrix(subdataset, configs, config_ticks, charts_data, title):
 if __name__ == '__main__':
     # plot_charts('accsum')
     # plot_charts('wordaccsum')
-    process_matrix('landscape')
+    # process_matrix('landscape')
     process_matrix('portrait')

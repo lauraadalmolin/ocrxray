@@ -1,6 +1,6 @@
-import os, sys, fitz
+import os, sys, argparse, fitz
 sys.path.append('utils')
-from hocr_from_searchable import is_searchable, create_hocr_from_searchable, combine_hocr
+from hocr_from_searchable import  is_searchable, create_hocr_from_searchable, combine_hocr
 
 input_path = 'pdfs/'
 output_path = 'ground-truth/'

@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
-from utils import format_bb, bb_intersection_over_union
+from tempfile import mkstemp
+from os import fdopen, remove
 from shutil import move, copymode
 import xml.etree.ElementTree as ET
-import os, sys
+import os, sys, os.path
+from os import path
+from html.parser import HTMLParser
+from collections import namedtuple
+import numpy as np
 import cv2
+from shutil import copyfile
+from utils import format_bb, bb_intersection_over_union
 
 def fix_alternate_letters(word):
     if word != None:
@@ -133,6 +140,6 @@ def generate_txt(ground_truth_path, path, output_path):
 
 if __name__ == '__main__':
     ground_truth_path =  'ground-truth/'
-    path = 'results/'
-    output_path = 'metrics/'
+    path = 'results2/'
+    output_path = 'metrics2/'
     generate_txt(ground_truth_path, path, output_path)
