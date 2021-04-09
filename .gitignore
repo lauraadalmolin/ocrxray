@@ -1,5 +1,11 @@
 # Byte-compiled / optimized / DLL files
 dataset/
+*.png
+*.xml
+*.txt
+*.jpeg
+*.pyc
+*.pdf
 
 __pycache__/
 *.py[cod]
