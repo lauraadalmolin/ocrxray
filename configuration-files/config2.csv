@@ -1,0 +1,2 @@
+L1,--psm 12 --oem 2 -c user_defined_dpi=300 -c language_model_penalty_non_freq_dict_word=0.05 -c user_defined_dpi=300 -c textord_tabfind_force_vertical_text=1 -c pageseg_apply_music_mask=0
+L2,--psm 12 --oem 2 -c user_defined_dpi=300 -c language_model_penalty_non_dict_word=0.075
