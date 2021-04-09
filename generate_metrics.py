@@ -1,12 +1,11 @@
 import os
 
 path = 'metrics'
-psm = ['psm1', 'psm3', 'psm4', 'psm11', 'psm12']
-tessdata = ['tessdata4', 'tessdata4_best']
+configs = ['configL1', 'configL2', 'configL3', 'configL4', 'configL5', 'configL6']
+tessdata = ['tessdata4']
 
 def generate_metrics(path):
     for directory in os.listdir(path): 
-        print(directory)
         full_directory_path = os.path.join(path, directory)
 
         if os.path.isdir(full_directory_path): 
@@ -29,32 +28,34 @@ def generate_metrics(path):
                     output_file = os.path.join(results_directory, 'wordacc', doc)
                     measure('wordacc', doc_path, output_file)
 
-def sum_metrics(path):
-    for directory in os.listdir(path):
 
+def sum_metrics(path, configs, output_folder='processed-metrics'):
+    for directory in os.listdir(path):
         full_directory_path = os.path.join(path, directory)
 
         if os.path.isdir(full_directory_path):
-
             results_directory = os.path.join(full_directory_path, 'results', 'accuracy')
-            group_measurements(results_directory, directory)
+            group_measurements(configs, results_directory, directory, output_folder)
 
 def measure(method: str, doc_path: str, output_file: str):
     ground_truth_path = doc_path.replace('/txt/', '/ground-truth/')
     command = '{:s} {:s} {:s} {:s}'.format(method, ground_truth_path, doc_path, output_file)
-    print(command)
+    # print(command)
     os.system(command)
 
 
 
-def group_measurements(results_directory: str, directory: str, output_folder='processed-metrics'):
+def group_measurements(configs, results_directory: str, directory: str, output_folder):
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
+
     if not os.path.exists(os.path.join(output_folder, 'accsum')):
         os.mkdir(os.path.join(output_folder, 'accsum'))
         os.mkdir(os.path.join(output_folder, 'wordaccsum'))
-
+    
     all_files = [f for f in os.listdir(results_directory) if os.path.isfile(os.path.join(results_directory, f))]
 
-    for op in psm:
+    for op in configs:
         for data in tessdata:
             command = ''
             token = data + '_' + op + '.'
@@ -70,4 +71,4 @@ def group_measurements(results_directory: str, directory: str, output_folder='pr
 
 if __name__ == '__main__':
     generate_metrics(path)
-    sum_metrics(path)
+    sum_metrics(path, configs)

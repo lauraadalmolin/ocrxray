@@ -10,7 +10,7 @@ from shutil import move, copymode
 from PIL import Image
 from pdf2image import convert_from_path
 
-config_path = "configuration_files/config.csv"
+config_path = "configuration-files/config.csv"
 results_dir = "results"
 
 def load_configs():
@@ -70,7 +70,6 @@ def generate_gvision_hocr(path, engine="gvision"):
     print("Generating HOCR...")
     print("File:   %s" % path)
     img = Image.open(path)
-    print('here')
     filename = magic_filesystem(path, engine)
     if not os.path.exists(filename):
         hocr = OcrGoogle(img)
@@ -80,7 +79,7 @@ def generate_gvision_hocr(path, engine="gvision"):
     print("Done!")
 
 
-def magic_filesystem(path, engine, psm):
+def magic_filesystem(path, engine, config):
     path = path.split('/')
     original_filename = path[2].split('.')
 
@@ -92,7 +91,7 @@ def magic_filesystem(path, engine, psm):
     if not os.path.exists(new_path):
         os.mkdir(new_path)
     
-    filename = "{:s}/{:s}_{:s}_psm{:s}.{:s}".format(new_path, original_filename, engine, psm, extension)
+    filename = "{:s}/{:s}_{:s}_config{:s}.{:s}".format(new_path, original_filename, engine, config, extension)
 
     return filename
 

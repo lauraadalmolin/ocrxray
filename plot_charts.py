@@ -1,10 +1,16 @@
+# -*- coding: utf-8 -*-
+# Mexer somente aqui ---------------------------
+
+output_path = 'processed-metrics'
+charts = 'charts'
+configs = 'configuration-files/config.csv'
+
+# ----------------------------------------------
 import re
 import matplotlib.pyplot as plt
-import os
+import matplotlib.patches as mpatches
+import os, csv
 import numpy as np
-
-path = 'processed-metrics'
-charts = 'charts'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -21,7 +27,7 @@ retorna um dicionário com base no parâmetro:
             'name': 'portrait', # nome do dataset
             'values': [
                 {
-                    'xName': 'tessdata4_psm1', # configuração
+                    'xName': 'tessdata4_config1', # configuração
                     'yValue': 21.1 # percentual de acurácia relativo ao parâmetro
                 }
             ]
@@ -29,10 +35,10 @@ retorna um dicionário com base no parâmetro:
         ...
     ]
 '''
-def __process_data(chart_type: str):
+def __process_data(output_path, chart_type: str):
 
     chart_data = []
-    full_path = os.path.join(path, chart_type)
+    full_path = os.path.join(output_path, chart_type)
     for doc_path in os.listdir(full_path):
 
         full_doc_path = os.path.join(full_path, doc_path)
@@ -70,8 +76,8 @@ def __process_data(chart_type: str):
 
     return chart_data
 
-def plot_charts(chart_type: str):
-    charts_data = __process_data(chart_type)
+def plot_charts(output_path, chart_type: str):
+    charts_data = __process_data(output_path, chart_type)
     for data in charts_data:
         xSeries = []
         xLabel = []
@@ -102,31 +108,47 @@ def plot_charts(chart_type: str):
 # nos arquivos do dataset
 # dado um token=portrait, serão procurados todos os resultados 
 # contendo 'portrait' e será plotada a matriz
-def process_matrix(token: str):
-    charts_data = __process_data('accsum')
-    subdataset = []
+def process_matrix(output_path, token: str, title: str, output_name: str, metrics_type='acc'):
+
+    if metrics_type == 'acc':
+        metrics_type = 'accsum'
+    elif metrics_type == 'wordacc':
+        metrics_type = 'wordaccsum'
+
+
+    charts_data = __process_data(output_path, metrics_type)
+    subdatasets = []
     configs = []
 
     for i, data in enumerate(charts_data):
         if (token in data['name']):
-            subdataset.append(data['name'])
+            subdatasets.append(data['name'])
         if (i == 0):
             for value in data['values']:
                 configs.append(value['xName'])
 
-    subdataset.sort(key=natural_keys)
+    subdatasets.sort(key=natural_keys)
     configs.sort(key=natural_keys)
 
     config_ticks = []
     for i, _ in enumerate(configs):
-        config_ticks.append('config {:d}'.format(i+1))
+        config_ticks.append('L{:d}'.format(i+1))
     
-    __plot_matrix(subdataset, configs, config_ticks, charts_data, token + ' analysis')
+    __plot_matrix(subdatasets, configs, config_ticks,
+                  charts_data, title, output_name, output_path)
 
-def __plot_matrix(subdataset, configs, config_ticks, charts_data, title):
+def __get_legends():
+    legends = []
+    with open(configs, mode='r') as config_box:
+        reader = csv.reader(config_box)
+        for row in reader:
+            legends.append(row[0] + ': ' + row[1])
+    return legends
+
+def __plot_matrix(subdatasets, configs, config_ticks, charts_data, title, output_name, output_path=''):
     percents = []
 
-    for dataset in subdataset:
+    for dataset in subdatasets:
         dataset_values = []
         for i, data in enumerate(charts_data):
             if data['name'] == dataset:
@@ -140,33 +162,44 @@ def __plot_matrix(subdataset, configs, config_ticks, charts_data, title):
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(percents)
 
-    print(configs)
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(config_ticks)))
-    ax.set_yticks(np.arange(len(subdataset)))
+    ax.set_yticks(np.arange(len(subdatasets)))
     # ... and label them with the respective list entries
     ax.set_xticklabels(config_ticks)
-    ax.set_yticklabels(subdataset)
+    ax.set_yticklabels(subdatasets)
 
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
             rotation_mode="anchor")
 
     # Loop over data dimensions and create text annotations.
-    for i in range(len(subdataset)):
+    for i in range(len(subdatasets)):
         for j in range(len(configs)):
             ax.text(j, i, percents[i, j], fontsize=10,
                            ha="center", va="center", color="w")
 
-    ax.set_title('Acurácia (0-100) | Orientação Retrato')
+    legends = __get_legends()
+    ax.legend(legends)
+    ax.set_title(title)
     fig.tight_layout()
-    plt.savefig(charts + '/' + 'Orientação Retrato' + '.jpeg', dpi=200)
-    plt.show()
+
+    if output_path == '':
+        output_path = 'charts'
+    else:
+        output_path += '/charts'
+
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+
+    plt.savefig(output_path + '/' + output_name + '.jpeg', dpi=200)
     plt.close()
 
 
 if __name__ == '__main__':
     # plot_charts('accsum')
     # plot_charts('wordaccsum')
-    # process_matrix('landscape')
-    process_matrix('portrait')
+    process_matrix(output_path, 'landscape', 'Acurácia (0-100) | Orientação Paisagem', 'landscape_accuracy', 'acc')
+    process_matrix(output_path, 'portrait', 'Acurácia (0-100) | Orientação Retrato', 'portrait_accuracy', 'acc')
+    process_matrix(output_path, 'landscape', 'Acurácia por Palavra (0-100) | Orientação Paisagem', 'landscape_word_accuracy', 'wordacc')
+    process_matrix(output_path, 'portrait', 'Acurácia por Palavra (0-100) | Orientação Retrato', 'portrait_word_accuracy', 'wordacc')

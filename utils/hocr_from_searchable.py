@@ -150,7 +150,6 @@ def create_hocr_from_searchable(page, page_count, dpi=300):
     for block in dictionary['blocks']:
         # Verifica se é um bloco que contém texto
         if block['type'] == 0:
-            print("here")
             # Gera uma ocr_carea
             global area
             area = GCVAnnotation(

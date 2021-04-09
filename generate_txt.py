@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+# Mexer somente aqui ---------------------------
+
+ground_truth_path =  'ground-truth/'
+results_path = 'results/'
+output_path = 'metrics/'
+
+# ----------------------------------------------
 from tempfile import mkstemp
 from os import fdopen, remove
 from shutil import move, copymode
@@ -11,6 +18,7 @@ import numpy as np
 import cv2
 from shutil import copyfile
 from utils import format_bb, bb_intersection_over_union
+
 
 def fix_alternate_letters(word):
     if word != None:
@@ -62,13 +70,13 @@ def generate_files(words, accurate_words, output_txt, output_gt):
                 found_words += 1
         output_gt.close()
         output_txt.close()
-        print("Accurate words: %d | Total: %d | Found: %d | Not-found: %d"%(len(accurate_words), total_words, found_words, total_words-found_words))
+        # print("Accurate words: %d | Total: %d | Found: %d | Not-found: %d"%(len(accurate_words), total_words, found_words, total_words-found_words))
 
 def get_words(root):
     words = root.findall(".//*[@class='ocrx_word']")
-    print("brute words %d"%(len(words)))
+    # print("brute words %d"%(len(words)))
     words = remove_empty_words(words)
-    print("no_empty %d"%(len(words)))
+    # print("no_empty %d"%(len(words)))
     return words
 
 
@@ -100,7 +108,6 @@ def txt_filesystem(path, output_path):
         os.mkdir(output_path)
         os.mkdir(output_path + '/txt')
         os.mkdir(output_path + '/ground-truth')
-        print('aqui')
     
     ground_truth_filename = os.path.join(output_path, os.path.join('ground-truth', file_name))
     txt_filename = os.path.join(output_path, os.path.join('txt', file_name))
@@ -123,15 +130,14 @@ def txt_generator(xml, ground_truth, output_path):
     generate_files(words, accurate_words, output_txt, output_gt)
 
 
-def generate_txt(ground_truth_path, path, output_path):
+def generate_txt(ground_truth_path, results_path, output_path):
     for xml in os.listdir(ground_truth_path):
 
         xml_path = os.path.join(ground_truth_path, xml)
         xml = xml[:-4].strip()
-        
-        for directory in os.listdir(path):
-            if os.path.isdir(os.path.join(path, directory)):
-                path2 = os.path.join(path, directory)
+        for directory in os.listdir(results_path):
+            if os.path.isdir(os.path.join(results_path, directory)):
+                path2 = os.path.join(results_path, directory)
                 for generated_file in os.listdir(path2):
                     if xml in generated_file.strip():
                         generated_file_path = os.path.join(path2, generated_file)
@@ -139,7 +145,4 @@ def generate_txt(ground_truth_path, path, output_path):
 
 
 if __name__ == '__main__':
-    ground_truth_path =  'ground-truth/'
-    path = 'results2/'
-    output_path = 'metrics2/'
-    generate_txt(ground_truth_path, path, output_path)
+    generate_txt(ground_truth_path, results_path, output_path)
